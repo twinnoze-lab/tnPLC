@@ -84,7 +84,7 @@ class tnPLC:
                 idx += 1
                 line = self.lad[idx]
                 mem = self.memmng.getInput(line)
-            elif line == 'O':
+            elif line == 'OUT':
                 idx += 1
                 line = self.lad[idx]
                 self.memmng.setOutput(line, mem)
