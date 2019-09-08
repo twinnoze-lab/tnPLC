@@ -5,7 +5,6 @@
 #
 # this module is main program of the tnPLC
 #
-
 import sys
 
 import rpgpio
@@ -13,8 +12,13 @@ import memmng
 import ladparser
 import cycletimectrl
 
+
+def getVersion():
+    """tnPLC Project version"""
+    return 'v0.0.1a'
+
 class tnPLC:
-    '''tnPLC main'''
+    """tnPLC main"""
 
     # constructor
     def __init__(self):
@@ -25,12 +29,13 @@ class tnPLC:
         # initialize GPIO
         self.gpio = rpgpio.RpGPIO()
 
-    # tnPLC startup point 
     def start(self):
-        # read argument
+        """tnPLC startup point"""
+
+        """read argument"""
         args = sys.argv
 
-        # read LAD file 
+        """read LAD file"""
         self.lad = self.ladparser.parseFile(args[1])
         if self.lad == None:
             print('LAD File[', args[1], '] Parse Errer!')
@@ -38,15 +43,16 @@ class tnPLC:
             # LAD program start
             self.run()
 
-        # cleanup GPIO
+        """cleanup GPIO"""
         self.gpio.finish()
         return
 
-    # cyclic RUN
     def run(self):
+        """cyclic RUN"""
         try:
             self.ctc = cycletimectrl.CycleTimeCtrl()
             self.isRoop = True
+
             while self.isRoop:
                 self.inputRefuresh()
                 self.cyclic()
@@ -56,16 +62,29 @@ class tnPLC:
             self.isRoop = False
           
 
-    # refresh GPIO Input
     def inputRefuresh(self):
+        """refresh GPIO Input"""
         self.memmng.refreshInput(self.gpio)
 
-    # refresh GPIO Output
     def outputRefuresh(self):
+        """refresh GPIO Output"""
         self.memmng.refreshOutput(self.gpio)
+        if __debug__:
+            pass
+        else:
+            strI = ''
+            strO = ''
+            for idx in range(10):
+                key = memmng.getInputKey(idx)
+                strI += key + ':' + str(self.memmng.getInput(key)) + ', '
+                key = memmng.getOutputKey(idx)
+                strO += key + ':' + str(self.memmng.getOutput(key)) + ', '
+            print(strI)
+            print(strO)
+            print(' ')
 
-    # LAD process
     def cyclic(self):
+        """LAD process"""
         ladlen = len(self.lad)
         idx = 0
         lastnw = 0
@@ -83,16 +102,23 @@ class tnPLC:
             elif line == 'LD':
                 idx += 1
                 line = self.lad[idx]
-                mem = self.memmng.getInput(line)
+                mem = self.memmng.getMemory(line)
             elif line == 'OUT':
                 idx += 1
                 line = self.lad[idx]
-                self.memmng.setOutput(line, mem)
+                self.memmng.setMemory(line, mem)
             idx += 1
 
     # 
     def sleep(self):
         self.ctc.sleep()
+
+
+"""cjeck command line options"""
+args = sys.argv
+if len(args) > 1 and args[1] == '-v':
+    print(getVersion())
+    sys.exit()
 
 # tnPLC Start
 tnplc = tnPLC()

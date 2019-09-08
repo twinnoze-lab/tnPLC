@@ -1,0 +1,1 @@
+# tnPLC Update History- v0.0.1    - first version.- v0.0.1a    - bug fixed. An error occurs if “Onn” is used for the LD operand.     - add version infometion function.    - add a debug mode for computer functions other than RaspberryPi.        - uss the -O option for python. 'python -O thplc.py sample.lad'.

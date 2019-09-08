@@ -5,30 +5,30 @@
 #
 # this module is LAD file parser for the tnPLC
 #
-
 import pyparsing as pp
 
+
 class LADParser:
-    '''tnPLC LAD File Systax Parse'''
+    """tnPLC LAD File Systax Parse"""
 
-    # constructor
     def __init__(self):
-      self.makeLadParser()
+        """constructor"""
+        self.makeLadParser()
 
-    # make LAD parser
     def makeLadParser(self):
-      self.NwNumber = pp.Word(pp.nums, max=1).setParseAction(pp.tokenMap(int)).setResultsName('NwNumber')
-      self.Nw = pp.Word('NW:').setResultsName('NwID') + self.NwNumber
-      self.Mem_I = pp.Combine(pp.Word('I') + pp.Word(pp.nums, max=2)).setResultsName('MemI')
-      self.Mem_O = pp.Combine(pp.Word('O') + pp.Word(pp.nums, max=2)).setResultsName('MemO')
-      self.Mem = self.Mem_I | self.Mem_O
-      self.Command_LD = pp.Word('LD').setResultsName('LD') + self.Mem
-      self.Command_OUT = pp.Word('OUT').setResultsName('OUT') + self.Mem
-      self.NwProgram = self.Nw + self.Command_LD + self.Command_OUT
-      self.Program = pp.OneOrMore(self.NwProgram)
+        """make LAD parser"""
+        self.NwNumber = pp.Word(pp.nums, max=1).setParseAction(pp.tokenMap(int)).setResultsName('NwNumber')
+        self.Nw = pp.Word('NW:').setResultsName('NwID') + self.NwNumber
+        self.Mem_I = pp.Combine(pp.Word('I') + pp.Word(pp.nums, max=2)).setResultsName('MemI')
+        self.Mem_O = pp.Combine(pp.Word('O') + pp.Word(pp.nums, max=2)).setResultsName('MemO')
+        self.Mem = self.Mem_I | self.Mem_O
+        self.Command_LD = pp.Word('LD').setResultsName('LD') + self.Mem
+        self.Command_OUT = pp.Word('OUT').setResultsName('OUT') + self.Mem
+        self.NwProgram = self.Nw + self.Command_LD + self.Command_OUT
+        self.Program = pp.OneOrMore(self.NwProgram)
 
-    # check parsed LAD file
     def checkLadParser(self, lad):
+        """check parsed LAD file"""
         ladlen = len(lad)
         idx = 0
         lastnw = 0
@@ -47,13 +47,13 @@ class LADParser:
             idx += 1
         return True
 
-    # parse and check input LAD file
     def parseFile(self, filename):
-      try:
-        lad = self.Program.parseFile(filename, True)
-        ret = self.checkLadParser(lad) 
-        if ret == False:
+        """parse and check input LAD file"""
+        try:
+            lad = self.Program.parseFile(filename, True)
+            ret = self.checkLadParser(lad)
+            if ret == False:
+                return None
+            return lad
+        except:
             return None
-        return lad
-      except:
-        return None

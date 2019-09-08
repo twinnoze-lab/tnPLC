@@ -1,0 +1,13 @@
+NW:1
+  LD O02
+  OUT O03
+NW:2
+  LD O01
+  OUT O02
+NW:3
+  LD O00
+  OUT O01
+NW:4
+  LD I00
+  OUT O00
+
