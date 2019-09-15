@@ -15,7 +15,7 @@ import cycletimectrl
 
 def getVersion():
     """tnPLC Project version"""
-    return 'v0.0.1a'
+    return 'v0.0.2'
 
 class tnPLC:
     """tnPLC main"""
@@ -37,7 +37,7 @@ class tnPLC:
 
         """read LAD file"""
         self.lad = self.ladparser.parseFile(args[1])
-        if self.lad == None:
+        if self.lad is None:
             print('LAD File[', args[1], '] Parse Errer!')
         else:
             # LAD program start
@@ -89,24 +89,43 @@ class tnPLC:
         idx = 0
         lastnw = 0
         while idx < ladlen:
-            line = self.lad[idx]
+            cmnd = self.lad[idx]
 
-            if line == 'NW:':
+            if cmnd == 'NW:':
                 # new circuit
                 idx += 1
-                line = self.lad[idx]
+                cmnd = self.lad[idx]
                 lastnw += 1
-                if lastnw != line:
-                    print('Network Line Parse Error!!')
+                if lastnw != cmnd:
+                    print('Network Number Parse Error!!')
                     sys.exit()
-            elif line == 'LD':
+                state = True    # 出力値
+                mem = True      # 中間値
+
+            elif cmnd == 'LD':
                 idx += 1
-                line = self.lad[idx]
-                mem = self.memmng.getMemory(line)
-            elif line == 'OUT':
+                cmnd = self.lad[idx]
+                mem = self.memmng.getMemory(cmnd)
+
+            elif cmnd == 'AND':
+                state &= mem
+            
                 idx += 1
-                line = self.lad[idx]
-                self.memmng.setMemory(line, mem)
+                cmnd = self.lad[idx]
+                mem = self.memmng.getMemory(cmnd)
+
+            elif cmnd == 'OR':
+                idx += 1
+                cmnd = self.lad[idx]
+                mem = mem | self.memmng.getMemory(cmnd)
+
+            elif cmnd == 'OUT':
+                state &= mem
+            
+                idx += 1
+                cmnd = self.lad[idx]
+                self.memmng.setMemory(cmnd, state)
+
             idx += 1
 
     # 

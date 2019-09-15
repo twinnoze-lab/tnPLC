@@ -1,7 +1,6 @@
 NW:1
-  LD I00
+  LD  I00
+  OR  I01
+  AND I02
+  OR  I03
   OUT O00
-NW:2
-  LD I01
-  OUT O01
-
