@@ -15,7 +15,7 @@ import cycletimectrl
 
 def getVersion():
     """tnPLC Project version"""
-    return 'v0.0.2'
+    return 'v0.0.2a'
 
 class tnPLC:
     """tnPLC main"""

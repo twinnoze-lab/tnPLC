@@ -17,15 +17,15 @@ class LADParser:
 
     def makeLadParser(self):
         """make LAD parser"""
-        self.NwNumber = pp.Word(pp.nums, max=1).setParseAction(pp.tokenMap(int)).setResultsName('NwNumber')
-        self.Nw = pp.Word('NW:').setResultsName('NwID') + self.NwNumber
-        self.Ope_I = pp.Combine(pp.Word('I') + pp.Word(pp.nums, max=2)).setResultsName('OpeI')
-        self.Ope_O = pp.Combine(pp.Word('O') + pp.Word(pp.nums, max=2)).setResultsName('OpeO')
+        self.NwNumber = pp.Word(pp.nums, max=1).setParseAction(pp.tokenMap(int))
+        self.Nw = pp.Word('NW:') + self.NwNumber
+        self.Ope_I = pp.Combine(pp.Word('I') + pp.Word(pp.nums, max=2))
+        self.Ope_O = pp.Combine(pp.Word('O') + pp.Word(pp.nums, max=2))
         self.Ope = self.Ope_I | self.Ope_O
-        self.Command_LD = pp.Word('LD').setResultsName('LD') + self.Ope
-        self.Command_AND = pp.Word('AND').setResultsName('AND') + self.Ope
-        self.Command_OR = pp.Word('OR').setResultsName('OR') + self.Ope
-        self.Command_OUT = pp.Word('OUT').setResultsName('OUT') + self.Ope
+        self.Command_LD = pp.Word('LD') + self.Ope
+        self.Command_AND = pp.Word('AND') + self.Ope
+        self.Command_OR = pp.Word('OR') + self.Ope
+        self.Command_OUT = pp.Word('OUT') + self.Ope
         self.Command_LDOR = self.Command_LD +  self.Command_OR*(0, 7)
         self.Command_ANDOR = self.Command_AND +  self.Command_OR*(0, 7)
         self.NwProgram = self.Nw + self.Command_LDOR + self.Command_ANDOR*(0, 7) + self.Command_OUT
