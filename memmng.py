@@ -13,12 +13,15 @@ def getInputKey(idx):
     key = 'I' + str(idx).zfill(2)
     return key
 
-
 def getOutputKey(idx):
     """Create a O[nn] Key"""
     key = 'O' + str(idx).zfill(2)
     return key
 
+def getMemoryKey(idx):
+    """Create a M[nn] Key"""
+    key = 'M' + str(idx).zfill(2)
+    return key
 
 class MemManage:
     """tnPLC I/O Data"""
@@ -27,11 +30,16 @@ class MemManage:
         """constructor"""
         self.Input = {}
         self.Output = {}
+        self.Memory = {}
         for idx in range(0, rpgpio.GPIO_INPUT_LEN):
             key = getInputKey(idx)
             self.Input.update({key: False})
             key = getOutputKey(idx)
             self.Output.update({key: False})
+            
+        for idx in range(0, 100):
+            key = getMemoryKey(idx)
+            self.Memory.update({key: False})
 
     def getInput(self, inp):
         """return I[nn] data"""
@@ -57,6 +65,8 @@ class MemManage:
             ret = self.Input[mem]
         elif mem[0] == 'O':
             ret = self.Output[mem]
+        elif mem[0] == 'M':
+            ret = self.Memory[mem]
         else:
             pass
         return ret
@@ -67,6 +77,8 @@ class MemManage:
             ret = self.Input.update({mem: val})
         elif mem[0] == 'O':
             ret = self.Output.update({mem: val})
+        elif mem[0] == 'M':
+            ret = self.Memory.update({mem: val})
         else:
             pass
         return ret

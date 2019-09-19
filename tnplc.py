@@ -15,7 +15,7 @@ import cycletimectrl
 
 def getVersion():
     """tnPLC Project version"""
-    return 'v0.0.2a'
+    return 'v0.0.3'
 
 class tnPLC:
     """tnPLC main"""
@@ -74,13 +74,17 @@ class tnPLC:
         else:
             strI = ''
             strO = ''
+            strM = ''
             for idx in range(10):
                 key = memmng.getInputKey(idx)
-                strI += key + ':' + str(self.memmng.getInput(key)) + ', '
+                strI += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
                 key = memmng.getOutputKey(idx)
-                strO += key + ':' + str(self.memmng.getOutput(key)) + ', '
+                strO += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
+                key = memmng.getMemoryKey(idx)
+                strM += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
             print(strI)
             print(strO)
+            print(strM)
             print(' ')
 
     def cyclic(self):
@@ -102,29 +106,38 @@ class tnPLC:
                 state = True    # 出力値
                 mem = True      # 中間値
 
-            elif cmnd == 'LD':
+            elif cmnd == 'LD' or cmnd == 'LDN':
                 idx += 1
-                cmnd = self.lad[idx]
-                mem = self.memmng.getMemory(cmnd)
+                ope = self.lad[idx]
+                if cmnd == 'LD':
+                    mem = self.memmng.getMemory(ope)
+                else:
+                    mem = not self.memmng.getMemory(ope)
 
-            elif cmnd == 'AND':
+            elif cmnd == 'AND' or cmnd == 'ANDN':
                 state &= mem
             
                 idx += 1
-                cmnd = self.lad[idx]
-                mem = self.memmng.getMemory(cmnd)
+                ope = self.lad[idx]
+                if cmnd == 'AND':
+                    mem = self.memmng.getMemory(ope)
+                else:
+                    mem = not self.memmng.getMemory(ope)
 
-            elif cmnd == 'OR':
+            elif cmnd == 'OR' or cmnd == 'ORN':
                 idx += 1
-                cmnd = self.lad[idx]
-                mem = mem | self.memmng.getMemory(cmnd)
+                ope = self.lad[idx]
+                if cmnd == 'OR':
+                    mem = mem | self.memmng.getMemory(ope)
+                else:
+                    mem = mem | (not self.memmng.getMemory(ope))
 
             elif cmnd == 'OUT':
                 state &= mem
             
                 idx += 1
-                cmnd = self.lad[idx]
-                self.memmng.setMemory(cmnd, state)
+                ope = self.lad[idx]
+                self.memmng.setMemory(ope, state)
 
             idx += 1
 
