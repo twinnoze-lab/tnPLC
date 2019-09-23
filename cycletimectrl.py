@@ -19,12 +19,15 @@ class CycleTimeCtrl:
         self.cycleTime = CONSTANT_CYCLE_TIME
         self.lasttime = time.time()
 
+    def gettimeelapsed(self):
+        """time elapsed whth in this cycle"""
+        curtime = time.time()
+        elapsed = (curtime - self.lasttime)
+        return elapsed
+
     def sleep(self):
         """wait for setting cycle time"""
-        curtime = time.time()
-        waittime = self.cycleTime - (curtime - self.lasttime)
+        waittime = self.cycleTime - self.gettimeelapsed()
         if waittime > 0:
             time.sleep(waittime)
-
         self.lasttime = time.time()
-

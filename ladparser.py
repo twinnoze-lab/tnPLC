@@ -13,9 +13,6 @@ class LADParser:
 
     def __init__(self):
         """constructor"""
-        self.makeLadParser()
-
-    def makeLadParser(self):
         """make LAD parser"""
         self.NwNumber = pp.Word(pp.nums, max=1).setParseAction(pp.tokenMap(int))
         self.Nw = pp.Literal('NW:') + self.NwNumber

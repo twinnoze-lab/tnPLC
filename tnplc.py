@@ -11,6 +11,7 @@ import rpgpio
 import memmng
 import ladparser
 import cycletimectrl
+import processinfo
 
 
 def getVersion():
@@ -28,6 +29,8 @@ class tnPLC:
         self.lad = 0
         # initialize GPIO
         self.gpio = rpgpio.RpGPIO()
+        # process inpormation write out
+        self.procinfo = processinfo.ProcessInfo()
 
     def start(self):
         """tnPLC startup point"""
@@ -69,23 +72,6 @@ class tnPLC:
     def outputRefuresh(self):
         """refresh GPIO Output"""
         self.memmng.refreshOutput(self.gpio)
-        if __debug__:
-            pass
-        else:
-            strI = ''
-            strO = ''
-            strM = ''
-            for idx in range(10):
-                key = memmng.getInputKey(idx)
-                strI += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
-                key = memmng.getOutputKey(idx)
-                strO += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
-                key = memmng.getMemoryKey(idx)
-                strM += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
-            print(strI)
-            print(strO)
-            print(strM)
-            print(' ')
 
     def cyclic(self):
         """LAD process"""
@@ -143,6 +129,22 @@ class tnPLC:
 
     # 
     def sleep(self):
+        strI = ''
+        strO = ''
+        strM = ''
+        for idx in range(10):
+            key = memmng.getInputKey(idx)
+            strI += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
+            key = memmng.getOutputKey(idx)
+            strO += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
+            key = memmng.getMemoryKey(idx)
+            strM += key + ':' + str(self.memmng.getMemory(key)) + ',\t'
+        info = {'timeelapsed': self.ctc.gettimeelapsed()}
+        info['strI'] = strI
+        info['strO'] = strO
+        info['strM'] = strM
+        self.procinfo.write(info)
+
         self.ctc.sleep()
 
 
