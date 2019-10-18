@@ -35,7 +35,6 @@ class LADParser:
         self.Command_LDOR = self.Command_LD + self.Command_OR * (0, 7)
         self.Command_ANDOR = self.Command_AND + self.Command_OR * (0, 7)
         self.Command_LDAND  = self.Command_LDOR + self.Command_ANDOR * (0, 7)
-        # self.BLOCK_COMPLEX = self.BLOCK + pp.Optional(pp.Or([self.Command_BAND, self.Command_BOR])) + pp.Optional(self.Command_ANDOR)
 
         self.Complex = pp.Forward()
         self.Block = pp.Group((self.Complex | self.Command_LDAND) + pp.Optional(self.Command_ANDOR * (0, 7)))
@@ -43,7 +42,7 @@ class LADParser:
         self.ComplexAND = self.Command_BSAND + self.Block + self.Block + self.Command_BFAND
         self.Complex <<= self.ComplexOR | self.ComplexAND
 
-        self.NwProgram = pp.Group(self.Nw + pp.OneOrMore(self.Block) + self.Command_OUT)
+        self.NwProgram = pp.Group(self.Nw + self.Block + self.Command_OUT)
 
         self.Program = pp.OneOrMore(self.NwProgram)
 
