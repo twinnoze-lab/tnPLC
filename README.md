@@ -16,11 +16,10 @@ for example `~/tnplc/`
 make a LAD file.
 LAD file is ladder program for the thPLC.
 
-current version tnPLC can use onry main 2 command.
-LD, OUT
+v0.0.5 tnPLC can use threr commands.
+LD(LDN), AND(ANDN), OR(ORN), BSOR, BFOR, BSAND, BFAND, OUT
 
-pleas check for the sample1.lad and sampl2.lad.
-sample1.lad and sampl2.lad are contain this repository.
+pleas check for the lad sample file in the sample directory on the repository.
 
 # License
 This software is released under the MIT License, see LICENSE.

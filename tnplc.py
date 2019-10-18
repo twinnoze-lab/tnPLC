@@ -10,13 +10,15 @@ import sys
 import rpgpio
 import memmng
 import ladparser
+import ladexecutor
 import cycletimectrl
 import processinfo
 
 
 def getVersion():
     """tnPLC Project version"""
-    return 'v0.0.3'
+    return 'v0.0.5'
+
 
 class tnPLC:
     """tnPLC main"""
@@ -26,11 +28,12 @@ class tnPLC:
         self.ladparser = ladparser.LADParser()
         # initialize memory manager
         self.memmng = memmng.MemManage()
-        self.lad = 0
+        self.abtree = None
         # initialize GPIO
         self.gpio = rpgpio.RpGPIO()
         # process inpormation write out
         self.procinfo = processinfo.ProcessInfo()
+        self.ladexec = ladexecutor.LADExecutor(self.memmng)
 
     def start(self):
         """tnPLC startup point"""
@@ -39,12 +42,14 @@ class tnPLC:
         args = sys.argv
 
         """read LAD file"""
-        self.lad = self.ladparser.parseFile(args[1])
-        if self.lad is None:
+        self.abtree = self.ladparser.parseFile(args[1])
+        if self.abtree is None:
             print('LAD File[', args[1], '] Parse Errer!')
         else:
             # LAD program start
+            print('Start tnPLC')
             self.run()
+            print('Finish tnPLC')
 
         """cleanup GPIO"""
         self.gpio.finish()
@@ -61,9 +66,10 @@ class tnPLC:
                 self.cyclic()
                 self.outputRefuresh()
                 self.sleep()
+
         except KeyboardInterrupt:
-            self.isRoop = False
-          
+            pass
+
 
     def inputRefuresh(self):
         """refresh GPIO Input"""
@@ -75,59 +81,8 @@ class tnPLC:
 
     def cyclic(self):
         """LAD process"""
-        ladlen = len(self.lad)
-        idx = 0
-        lastnw = 0
-        while idx < ladlen:
-            cmnd = self.lad[idx]
-
-            if cmnd == 'NW:':
-                # new circuit
-                idx += 1
-                cmnd = self.lad[idx]
-                lastnw += 1
-                if lastnw != cmnd:
-                    print('Network Number Parse Error!!')
-                    sys.exit()
-                state = True    # 出力値
-                mem = True      # 中間値
-
-            elif cmnd == 'LD' or cmnd == 'LDN':
-                idx += 1
-                ope = self.lad[idx]
-                if cmnd == 'LD':
-                    mem = self.memmng.getMemory(ope)
-                else:
-                    mem = not self.memmng.getMemory(ope)
-
-            elif cmnd == 'AND' or cmnd == 'ANDN':
-                state &= mem
-            
-                idx += 1
-                ope = self.lad[idx]
-                if cmnd == 'AND':
-                    mem = self.memmng.getMemory(ope)
-                else:
-                    mem = not self.memmng.getMemory(ope)
-
-            elif cmnd == 'OR' or cmnd == 'ORN':
-                idx += 1
-                ope = self.lad[idx]
-                if cmnd == 'OR':
-                    mem = mem | self.memmng.getMemory(ope)
-                else:
-                    mem = mem | (not self.memmng.getMemory(ope))
-
-            elif cmnd == 'OUT':
-                state &= mem
-            
-                idx += 1
-                ope = self.lad[idx]
-                self.memmng.setMemory(ope, state)
-
-            idx += 1
-
-    # 
+        self.ladexec.Execution(self.abtree)
+    #
     def sleep(self):
         strI = ''
         strO = ''
@@ -150,7 +105,11 @@ class tnPLC:
 
 """cjeck command line options"""
 args = sys.argv
-if len(args) > 1 and args[1] == '-v':
+arglen=len(args)
+
+if arglen <= 1:
+        sys.exit()
+if arglen > 1 and args[1] == '-v':
     print(getVersion())
     sys.exit()
 

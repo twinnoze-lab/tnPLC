@@ -23,6 +23,7 @@ def getMemoryKey(idx):
     key = 'M' + str(idx).zfill(2)
     return key
 
+
 class MemManage:
     """tnPLC I/O Data"""
 
@@ -31,13 +32,11 @@ class MemManage:
         self.Input = {}
         self.Output = {}
         self.Memory = {}
-        for idx in range(0, rpgpio.GPIO_INPUT_LEN):
+        for idx in range(0, 100):
             key = getInputKey(idx)
             self.Input.update({key: False})
             key = getOutputKey(idx)
             self.Output.update({key: False})
-            
-        for idx in range(0, 100):
             key = getMemoryKey(idx)
             self.Memory.update({key: False})
 
@@ -96,4 +95,3 @@ class MemManage:
             key = getOutputKey(idx)
             mem = self.getOutput(key)
             gpio.setGPIO(idx, mem)
-

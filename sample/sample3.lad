@@ -1,0 +1,15 @@
+NW:1
+  BSAND
+  BSOR
+  LD  I00
+  AND I01
+  LD  I02
+  BFOR
+  AND I03
+  BSOR
+  LD  I04
+  AND I05
+  LD  I06
+  BFOR
+  BFAND
+  OUT O00

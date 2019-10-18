@@ -1,4 +1,0 @@
-NW:1
-  LD   I00
-  ANDN I01
-  OUT  O00

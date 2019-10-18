@@ -1,0 +1,20 @@
+NW:1
+  LD   I00
+  AND  I01
+  OUT  O00
+NW:2
+  LD   I00
+  OR   I01
+  OUT  O01
+NW:3
+  LD   I00
+  OR   I01
+  AND  I02
+  OR   I03
+  OUT  O02
+NW:4
+  LDN  I00
+  ORN  I01
+  ANDN I02
+  ORN  I03
+  OUT  O03

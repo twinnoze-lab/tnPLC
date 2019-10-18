@@ -5,7 +5,7 @@
 #
 # this module is 'cycle processing infomation logging' for the tnPLC
 #
-import os
+
 
 class ProcessInfo:
     """processing infomation log oout"""

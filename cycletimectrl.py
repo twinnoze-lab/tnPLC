@@ -6,7 +6,6 @@
 # this module is cycle time controler for the tnPLC
 #
 import time
-from time import sleep
 
 CONSTANT_CYCLE_TIME = 0.100    # 100ms cyclic time
 

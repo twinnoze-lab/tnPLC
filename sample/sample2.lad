@@ -1,9 +1,8 @@
 NW:1
+  BSOR
   LD  I00
   AND I01
-  OUT M00
-NW:2
-  LD  M00
-  OR  I02
+  LD  I02
   AND I03
+  BFOR
   OUT O00

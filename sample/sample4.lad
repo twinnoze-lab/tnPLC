@@ -1,0 +1,13 @@
+NW:1
+  BSOR
+  BSOR
+  LD   I00
+  AND  I01
+  LD   I02
+  AND  I03
+  BFOR
+  LD   I04
+  AND  I05
+  BFOR
+  AND  I06
+  OUT  O00

@@ -1,5 +1,0 @@
-NW:1
-  LDN  I00
-  AND  I01
-  ORN  I02
-  OUT  O00
